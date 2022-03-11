@@ -56,13 +56,58 @@ test('renders "email must be a valid email address" if an invalid email is enter
 });
 
 test('renders "lastName is a required field" if an last name is not entered and the submit button is clicked', async () => {
-
+    const submitBtn = screen.getByRole('button')
+    userEvent.click(submitBtn)
+    const errorMessage = await screen.findByText(/lastName is a required field/i)
+    expect(errorMessage).toBeInTheDocument()
+    
 });
 
 test('renders all firstName, lastName and email text when submitted. Does NOT render message if message is not submitted.', async () => {
+    const firstName = screen.getByLabelText(/first name*/i)
+    const lastName = screen.getByLabelText(/last name*/i)
+    const email = screen.getByLabelText(/email*/i)
+    userEvent.type(firstName, "first")
+    userEvent.type(lastName, "last")
+    userEvent.type(email, "foo@gmail.com")
+    const submitBtn = screen.getByRole('button')
+    userEvent.click(submitBtn)
+
+    await waitFor(() => {
+        const firstNameDisplay = screen.queryByText("first")
+        const lastNameDisplay = screen.queryByText("last")
+        const emailDisplay = screen.queryByText("foo@gmail.com")
+        const messageDisplay = screen.queryByTestId("messageDisplay")
+        expect(firstNameDisplay).toBeInTheDocument()
+        expect(lastNameDisplay).toBeInTheDocument()
+        expect(emailDisplay).toBeInTheDocument()
+        expect(messageDisplay).not.toBeInTheDocument()
+    })
 
 });
 
 test('renders all fields text when all fields are submitted.', async () => {
+    const firstName = screen.getByLabelText(/first name*/i)
+    const lastName = screen.getByLabelText(/last name*/i)
+    const email = screen.getByLabelText(/email*/i)
+    const message = screen.getByLabelText(/message/i)
+
+    userEvent.type(firstName, "first")
+    userEvent.type(lastName, "last")
+    userEvent.type(email, "foo@gmail.com")
+    userEvent.type(message, 'abc')
+    const submitBtn = screen.getByRole('button')
+    userEvent.click(submitBtn)
+
+    await waitFor(() => {
+        const firstNameDisplay = screen.queryByText("first")
+        const lastNameDisplay = screen.queryByText("last")
+        const emailDisplay = screen.queryByText("foo@gmail.com")
+        const messageDisplay = screen.queryByTestId("messageDisplay")
+        expect(firstNameDisplay).toBeInTheDocument()
+        expect(lastNameDisplay).toBeInTheDocument()
+        expect(emailDisplay).toBeInTheDocument()
+        expect(messageDisplay).toBeInTheDocument()
+    })
 
 });
